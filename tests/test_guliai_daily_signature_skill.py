@@ -1,7 +1,9 @@
 import importlib.util
+import json
 import os
 import tempfile
 import unittest
+from argparse import Namespace
 from datetime import date
 from pathlib import Path
 
@@ -75,6 +77,32 @@ class CopyValidationTests(unittest.TestCase):
 
 
 class PlacementAndCompositionTests(unittest.TestCase):
+    def test_configure_keeps_default_logo_fully_on_canvas(self):
+        ops = load_ops()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            portrait = root / "portrait.ppm"
+            logo = root / "logo.ppm"
+            qr = root / "qr.ppm"
+            for path in (portrait, logo, qr):
+                write_ppm(path, 8, 8, (255, 255, 255))
+
+            config = ops.write_local_config(
+                Namespace(
+                    config=str(root / "state" / "local-config.json"),
+                    portrait=str(portrait),
+                    logo=str(logo),
+                    qr=str(qr),
+                    output_dir=str(root / "output"),
+                    timezone="Asia/Shanghai",
+                )
+            )
+            placement = config["logo"]["placement"]
+            self.assertLessEqual(
+                placement["y"] + placement["height"],
+                config["canvas"]["height"],
+            )
+
     def test_scales_baseline_placements_proportionally(self):
         ops = load_ops()
         placement = ops.scale_placement(
@@ -155,6 +183,34 @@ class PublicationTests(unittest.TestCase):
 
 
 class SkillContractTests(unittest.TestCase):
+    def test_layout_contract_reserves_clear_footprints_for_real_assets(self):
+        contract_path = SKILL_DIR / "references" / "layout-contract.json"
+        self.assertTrue(contract_path.is_file())
+
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
+        self.assertEqual(contract["canvas"], {"width": 1024, "height": 1536})
+        self.assertEqual(
+            contract["clear_footprints"]["qr"],
+            {"x": 0, "y": 1230, "width": 280, "height": 306},
+        )
+        self.assertEqual(
+            contract["clear_footprints"]["logo"],
+            {"x": 620, "y": 1315, "width": 404, "height": 221},
+        )
+        self.assertEqual(
+            set(contract["base_forbidden"]),
+            {
+                "person",
+                "hands",
+                "clothing",
+                "furniture",
+                "objects",
+                "text",
+                "placeholder_blocks",
+                "qr_or_logo_artwork",
+            },
+        )
+
     def test_skill_has_discoverable_entrypoint_and_required_resources(self):
         required = [
             SKILL_DIR / "SKILL.md",
@@ -164,6 +220,7 @@ class SkillContractTests(unittest.TestCase):
             SKILL_DIR / "references" / "copy-guide.md",
             SKILL_DIR / "references" / "asset-contract.md",
             SKILL_DIR / "references" / "qa-checklist.md",
+            SKILL_DIR / "references" / "layout-contract.json",
             OPS_PATH,
         ]
         missing = [str(path) for path in required if not path.is_file()]

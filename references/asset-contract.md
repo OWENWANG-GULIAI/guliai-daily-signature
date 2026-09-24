@@ -20,12 +20,34 @@ python3 scripts/daily_signature_ops.py configure \
 
 ## 素材角色
 
-- `portrait.path`：imagegen 身份参考。保持本人脸部、发型、服装气质；替换输入背景。
+- `portrait.path`：兼容旧配置的默认身份参考。
+- `portrait_variants`：可选人物资产池。每项包含 `id`、`path`、`kind` 与简短 `use_case`；每张日签选择其中一项作为人物身份、服装、姿态或插画风格参考。真人肖像优先用于身份保持；插画版只在需要明确水彩/插画表达时作为风格与构图参考。
 - `qr.path`：最终联系入口。由 ffmpeg 以最近邻插值缩放后覆盖；生图模型不接触二维码。
 - `logo.path`：官方横向 Logo。由 ffmpeg 等比使用源画布叠加；生图模型不重绘品牌字标。
 - `output_directory`：只管理 `今日日签海报.png` 与 `朋友圈文案.md` 两个固定文件。
 
 二维码缺失时不交付最终版。人物或 Logo 缺失时可以做待补素材的预览底图，但不得发布或替换上一组正式文件。
+
+人物资产池示例：
+
+```json
+{
+  "portrait_variants": [
+    {
+      "id": "white-seat",
+      "path": "/absolute/path/to/white-suit-seat.png",
+      "kind": "photo",
+      "use_case": "沉静思考、判断、复盘"
+    },
+    {
+      "id": "watercolor-profile",
+      "path": "/absolute/path/to/watercolor-profile.png",
+      "kind": "illustration",
+      "use_case": "转向、新局、轻情绪视觉表达"
+    }
+  ]
+}
+```
 
 ## 确定性命令
 

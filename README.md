@@ -7,13 +7,16 @@
 <p align="center">从真实理念出发，生成可直接发布的个人品牌日签海报与朋友圈文案。</p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-D39A18">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-D39A18">
   <img alt="Python" src="https://img.shields.io/badge/Python-3.9%2B-3776AB">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-2EA44F">
 </p>
 
 > [!IMPORTANT]
 > 这是一个面向 Codex 的个性化品牌生产 Skill：它负责“选题—文案—生图—质检—真实资产合成—安全发布”的完整流程，但不内置真人肖像、微信二维码、聊天原文或任何本机路径。
+
+> **定位**：把真实观点转成构图可变化、真实资产可复用的个人品牌日签。<br>
+> **不做什么**：不重绘真实二维码或 Logo，不把私人素材和聊天内容打包进公开仓库，也不把固定版式误当成品牌一致性。
 
 ## 为什么需要它
 
@@ -48,8 +51,9 @@ flowchart LR
 |---|---|
 | 理念选题 | 优先使用用户真实表达，并对近 30 天主题去重 |
 | 日签文案 | 主标题、正文、英文点缀、星期标签形成单一清晰观点 |
-| 视觉生成 | 1024×1536、暖象牙白与克制金色、人物约占画面 1/3 |
+| 视觉生成 | 1024×1536、动态构图路线、人物约占画面 1/3；支持人物单侧、结构叙事、分栏杂志与水彩转场 |
 | 品牌资产保护 | 二维码和 Logo 不交给模型重绘，最后再精确合成 |
+| 底部安全带 | 二维码与 Logo 的覆盖范围保持连续自然背景；无人物遮挡、无色块占位框 |
 | 朋友圈文案 | 80–130 个可见字符，2–5 个自然段，只保留可发布正文 |
 | 安全发布 | 校验通过后成对替换文件；中途失败自动恢复旧版本 |
 
@@ -151,7 +155,7 @@ python3 -m unittest discover -s tests -v
 python3 scripts/daily_signature_ops.py resolve-date --when tomorrow --today 2026-09-15
 ```
 
-测试覆盖日期解析、朋友圈文案合同、坐标缩放、二维码像素保真、发布失败回滚和公开包边界。
+测试覆盖日期解析、朋友圈文案合同、坐标缩放、Logo 默认坐标不越界、二维码像素保真、发布失败回滚、底部安全区合同和公开包边界。
 
 ## 隐私与安全
 

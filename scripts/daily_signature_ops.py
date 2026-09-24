@@ -359,7 +359,7 @@ def write_local_config(args: argparse.Namespace) -> dict[str, Any]:
         },
         "logo": {
             "path": str(paths["logo"].expanduser().resolve()),
-            "placement": {"x": 650, "y": 1343, "width": 320, "height": 213},
+            "placement": {"x": 650, "y": 1323, "width": 320, "height": 213},
         },
     }
     config_path.parent.mkdir(parents=True, exist_ok=True)
